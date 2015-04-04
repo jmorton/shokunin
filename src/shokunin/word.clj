@@ -4,13 +4,15 @@
 
 (defn term-frequency
   "Count occurrences of terms in a sequence of string."
-  [lines stop-set]
-  (let [tokenize (partial re-seq #"(?:\w[\w\-\']+)")
-        non-stop (partial remove stop-set)
-        parse    (comp frequencies non-stop tokenize lower-case)
-        tally    (map parse lines)
-        adder    (partial merge-with +)]
-    (reduce adder tally)))
+  ([lines]
+   (term-frequency lines #{}))
+  ([lines stop-set]
+   (let [tokenize (partial re-seq #"(?:\w[\w\-\']+)")
+         non-stop (partial remove stop-set)
+         parse    (comp frequencies non-stop tokenize lower-case)
+         tally    (map parse lines)
+         adder    (partial merge-with +)]
+     (reduce adder tally))))
 
 
 (defn file-term-frequency
@@ -27,5 +29,3 @@
                                 "resources/01/stop.txt")]
     (println (take 10 (sort-by last > tf)))
     (println (take 10 (sort-by first compare tf)))))
-
-(example)
