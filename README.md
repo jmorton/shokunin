@@ -1,14 +1,14 @@
-# shokunin
+# 職人
 
-Practice clojure.
+(shokunin)
+
+Practice Clojure.
 
 ## Usage
 
 Daily.
 
-## Exercises
-
-### Word Count
+### Term Frequency Exercise
 
 Write a program that reads text and counts the number of times each
 word occurs.
