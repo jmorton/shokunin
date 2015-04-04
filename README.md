@@ -17,7 +17,7 @@ word occurs.
 * Show the ten most frequently occuring words.
 * Show an alphabetized list of words occuring three times.
 
-Use `resources/01/declaration.txt` and `resources/01/stop-words.txt`
+Use `resources/01/declaration.txt` and `resources/01/stop.txt`
 
 ## License
 
