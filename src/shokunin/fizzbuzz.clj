@@ -1,12 +1,8 @@
 (ns shokunin.fizzbuz)
 
-(def fizzer (cycle [nil nil "fizz"]))
+(def fizz-buzz (let [fizzer (cycle [nil nil "fizz"])
+                     buzzer (cycle [nil nil nil nil "buzz"])]
+                 (map str fizzer buzzer)))
 
-(def buzzer (cycle [nil nil nil nil "buzz"]))
+(take 15 fizz-buzz)
 
-(defn fizz-buzz [n]
-  (let [fs (take n fizzer)
-        bs (take n buzzer)]
-    (map str fs bs)))
-
-(fb 15)
