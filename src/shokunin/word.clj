@@ -46,9 +46,18 @@
 
 (defn word-chain
   "Use everything but the last word in an n-gram as a key to the set of words that follow them."
-  [n word-seq]
+  [word-seq]
   (let [tri-grams (n-gram 3 word-seq)]
     (apply merge-with clojure.set/union (map word-link tri-grams))))
 
-(word-chain 3 (tokenize (slurp "resources/01/declaration.txt")))
+
+(defn file-word-chain
+  "Build a word chain from the file contents."
+  [path]
+  (with-open [file (clojure.java.io/reader path)]
+     (word-chain (mapcat (comp tokenize lower-case)
+                         (line-seq file)))))
+
+;; (def indy-chain (file-word-chain "resources/01/declaration.txt"))
+;; (sort-by #(count (val %)) > indy-chain)
 
