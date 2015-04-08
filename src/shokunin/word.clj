@@ -1,6 +1,7 @@
 (ns shokunin.word
   (:require [clojure.string :refer [lower-case split-lines]]))
 
+(def tokenize (partial re-seq #"(?:\w[\w\-\']*)"))
 
 (defn term-frequency
   "Count occurrences of terms in a sequence of string."
@@ -29,3 +30,25 @@
                                 "resources/01/stop.txt")]
     (println (take 10 (sort-by last > tf)))
     (println (take 10 (sort-by first compare tf)))))
+
+
+(defn n-gram
+  "Um. Create n-gram from a word seq."
+  [n word-seq]
+  (partition-all n 1 word-seq))
+
+
+(defn word-link
+  "Turn a tri-gram into a word-chain entry."
+  [[t1 t2 t3]]
+  {[t1 t2] (if t3 #{t3} #{})})
+
+
+(defn word-chain
+  "Use everything but the last word in an n-gram as a key to the set of words that follow them."
+  [n word-seq]
+  (let [tri-grams (n-gram 3 word-seq)]
+    (apply merge-with clojure.set/union (map word-link tri-grams))))
+
+(word-chain 3 (tokenize (slurp "resources/01/declaration.txt")))
+
