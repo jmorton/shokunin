@@ -39,25 +39,40 @@
 
 
 (defn word-link
-  "Turn a tri-gram into a word-chain entry."
-  [[t1 t2 t3]]
-  {[t1 t2] (if t3 #{t3} #{})})
+  "Turn an (arbitrary) n-gram into a markov chain entry."
+  [[& ts]] {(butlast ts) (list (last (rest ts)))})
 
 
 (defn word-chain
-  "Use everything but the last word in an n-gram as a key to the set of words that follow them."
+  "Build a word chain out of word tokens."
   [word-seq]
-  (let [tri-grams (n-gram 3 word-seq)]
-    (apply merge-with clojure.set/union (map word-link tri-grams))))
+  (let [word-seq* (concat [:start] word-seq [:end])
+        tri-grams (n-gram 3 word-seq*)]
+    (apply merge-with concat (map word-link tri-grams))))
 
 
-(defn file-word-chain
+(defn sentence-tokens
+  "Turn a seq of words into sentences."
+  [word-seq]
+  (re-seq #"(?:[^\.\?\!]+[\.\?\!]\s*)" word-seq))
+
+
+(defn word-tokens
+  "Turn a sentence into a markov chain ready seq of words."
+  [sentence]
+  (re-seq #"(?:\w[\w\'\-]*|[\,\.\?\!\:\;])" sentence))
+
+;; still need to count probability of transition somewhere
+(-> "a b 1 a b x a b x a b x" word-tokens word-chain)
+
+(defn parse-file
   "Build a word chain from the file contents."
-  [path]
+  [path tokenizer parser]
   (with-open [file (clojure.java.io/reader path)]
-     (word-chain (mapcat (comp tokenize lower-case)
-                         (line-seq file)))))
+     (doall (parser (mapcat tokenizer (line-seq file))))))
 
-;; (def indy-chain (file-word-chain "resources/01/declaration.txt"))
-;; (sort-by #(count (val %)) > indy-chain)
 
+(defn naive-bayes [& ps]
+  (let [prob (apply * ps)
+        not-p (apply * (map #(- 1 %) ps))]
+    (/ prob (+ prob not-p))))
