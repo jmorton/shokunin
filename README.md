@@ -19,7 +19,7 @@ word occurs.
 * Show the ten most frequently occuring words.
 * Show an alphabetized list of words occuring three times.
 
-### Markov Chain
+### Markov Chain Exercises
 
 Write a program that builds a markov chain from a set of files
 and generates sentences.

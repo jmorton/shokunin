@@ -40,7 +40,7 @@
 
 (defn word-link
   "Turn an (arbitrary) n-gram into a markov chain entry."
-  [[& ts]] {(butlast ts) (list (last (rest ts)))})
+  [[& ts]] {(butlast ts) #{(last (rest ts))}})
 
 
 (defn word-chain
@@ -48,7 +48,7 @@
   [word-seq]
   (let [word-seq* (concat [:start] word-seq [:end])
         tri-grams (n-gram 3 word-seq*)]
-    (apply merge-with concat (map word-link tri-grams))))
+    (apply merge-with clojure.set/union (map word-link tri-grams))))
 
 
 (defn sentence-tokens
@@ -62,8 +62,25 @@
   [sentence]
   (re-seq #"(?:\w[\w\'\-]*|[\,\.\?\!\:\;])" sentence))
 
-;; still need to count probability of transition somewhere
-(-> "a b 1 a b x a b x a b x" word-tokens word-chain)
+
+(defn markov-sentence
+  ([chain]
+   (let [[start choices] (last (take (rand-int (count chain)) chain))
+         choice          (rand-nth (seq choices))
+         words           (concat (rest start) [choice])]
+     (markov-sentence chain words)))
+  ([chain words]
+   (if (or (= :end (last words)) (> (count words) 50)) words
+     (let [prefix-pair   (reverse (take 2 (reverse words)))
+           choices       (get chain prefix-pair)
+           choice        (rand-nth (seq choices))]
+        (markov-sentence chain (concat words [choice]))))))
+
+; an example
+(def sentences (-> (slurp "resources/01/federalist.txt") lower-case sentence-tokens))
+(def sentences-chains (map word-chain (map word-tokens sentences)))
+(def federalist-chains (apply merge-with clojure.set/union fed-chain))
+(markov-sentence federalist-chains)
 
 (defn parse-file
   "Build a word chain from the file contents."
