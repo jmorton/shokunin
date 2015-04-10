@@ -8,6 +8,8 @@ Practice Clojure.
 
 Daily.
 
+## Text Analysis
+
 ### Term Frequency Exercise
 
 Write a program that reads text and counts the number of times each
@@ -16,6 +18,17 @@ word occurs.
 * Ignore stop-words.
 * Show the ten most frequently occuring words.
 * Show an alphabetized list of words occuring three times.
+
+### Markov Chain
+
+Write a program that builds a markov chain from a set of files
+and generates sentences.
+
+* Sentence tokenizer.
+* Word and punctuation tokenizere
+* Chain should include :start and :stop tokens.
+* Arbitraty length n-gram generation.
+* Random sentence generator.
 
 Use `resources/01/declaration.txt` and `resources/01/stop.txt`
 
