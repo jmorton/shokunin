@@ -45,11 +45,10 @@
 
 (defn word-chain
   "Build a word chain out of word tokens."
-  [word-seq]
+  [word-seq n]
   (let [word-seq* (concat [:start] word-seq [:end])
-        tri-grams (n-gram 3 word-seq*)]
+        tri-grams (n-gram n word-seq*)]
     (apply merge-with clojure.set/union (map word-link tri-grams))))
-
 
 (defn sentence-tokens
   "Turn a seq of words into sentences."
@@ -70,7 +69,7 @@
          words           (concat (rest start) [choice])]
      (markov-sentence chain words)))
   ([chain words]
-   (if (or (= :end (last words)) (> (count words) 50)) words
+   (if (or (= :end (last words)) (> (count words) 100)) words
      (let [prefix-pair   (reverse (take 2 (reverse words)))
            choices       (get chain prefix-pair)
            choice        (rand-nth (seq choices))]
@@ -78,7 +77,7 @@
 
 ; an example
 (def sentences (-> (slurp "resources/01/federalist.txt") lower-case sentence-tokens))
-(def sentences-chains (map word-chain (map word-tokens sentences)))
+(def sentences-chains (map word-chain (map word-tokens sentences) 2))
 (def federalist-chains (apply merge-with clojure.set/union fed-chain))
 (markov-sentence federalist-chains)
 
