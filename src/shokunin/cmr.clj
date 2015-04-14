@@ -31,17 +31,16 @@
   ([url params]
      (let [opts {:last-page (page-count url params)}]
        (http-seq url params opts)))
-  ([url {{:keys [page-num page-size]} :query-params :as params}
+  ([url {{:keys [page-num page-size]
+          :or   {page-num 1 page-size 10}} :query-params :as params}
         {:keys [last-page] :as opts}]
-       (let [results     (get-in (query url params) ["feed" "entry"])
-             next-params (update-in params [:query-params :page-num] inc)
-             more-pages  (< page-num last-page)]
+       (let [results       (get-in (query url params) ["feed" "entry"])
+             next-params   (update-in params [:query-params :page-num] inc)
+             more-pages    (< page-num last-page)]
          (lazy-cat results (if more-pages (http-seq url next-params opts))))))
 
 (comment "usage example"
   (let [params  { :query-params {:short-name "MOD09A1" :page-num 1 :page-size 25}}
         url     "https://cmr.earthdata.nasa.gov/search/granules"
         results (http-seq url params)]
-    (map #(get % "title") (take 5 results)))
-  results)
-
+    (map #(get % "title") (take 2 results))))
