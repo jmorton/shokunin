@@ -1,16 +1,14 @@
 (require 'cljs.core)
 (require 'cljs.closure)
-(require 'cljs.repl.browser)
+(require '[cljs.repl :as repl]
+         '[cljs.repl.browser :as browser])
 
-(cljs.closure/build "src"
-  {:main 'shokunin.core
-   :verbose    true
-   :output-dir "scripts/out"
-   :output-to  "scripts/main.js" })
-
-(cljs.repl/repl (cljs.repl.browser/repl-env)
-  :watch "src"
-  :output-dir "scripts/out")
+(repl/repl (browser/repl-env)
+           :main 'shokunin.core
+           :verbose    true
+           :output-dir "scripts/out"
+           :output-to  "scripts/main.js"
+           :watch "src")
 
 ;; emacs support
 (comment
