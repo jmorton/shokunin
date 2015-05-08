@@ -1,7 +1,11 @@
 (ns shokunin.core
   (:require [clojure.browser.repl :as repl]))
 
-(repl/connect "http://localhost:9000/repl")
+(defonce conn
+  (repl/connect "http://localhost:9000/repl"))
 
-(defn ahoy [x]
-  (str "Ahoy, " x " oy!"))
+(enable-console-print!)
+
+(println "Hello world!")
+
+(defn nodes [selector] (document))
